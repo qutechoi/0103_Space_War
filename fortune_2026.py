@@ -83,95 +83,59 @@ class Fortune2026:
 
     def create_fortune_prompt(self, birth_info: Dict[str, Any], month: str) -> str:
         """특정 월의 운세를 위한 프롬프트 생성"""
-        prompt = f"""
-당신은 한국의 전통 사주명리학과 현대적 운세 해석을 전문으로 하는 운세 전문가입니다.
+        prompt = f"""사주명리 전문가로서 2026년 {month} 운세 분석:
 
-다음 정보를 바탕으로 2026년 {month}의 운세를 상세하게 분석해주세요:
+생년월일: {birth_info['birth_date']} {birth_info['birth_time']}
+성별: {birth_info['gender']}, 나이: {birth_info['age_in_2026']}세
 
-**개인 정보:**
-- 생년월일: {birth_info['birth_date']}
-- 태어난 시각: {birth_info['birth_time']}
-- 성별: {birth_info['gender']}
-- 2026년 나이: {birth_info['age_in_2026']}세
+8개 영역 분석 (간결하게):
+1. 건강운 2. 금전운 3. 학업/사업운 4. 인간관계운 
+5. 연애운 6. 가족운 7. 취업/승진운 8. 여행운
 
-**분석 요청 사항:**
-2026년 {month}에 대해 다음 8개 영역별로 운세를 분석해주세요:
+각 영역별 출력:
+- 점수: ★★★☆☆
+- 키워드: 3개
+- 분석: 1-2문장
+- 주의사항: 1문장
+- 추천: 1문장
 
-1. **건강운** (신체적, 정신적 건강 상태 및 주의사항)
-2. **금전운** (수입, 지출, 투자, 재정 관리)
-3. **학업/사업운** (학습능력, 사업성과, 업무효율성)
-4. **인간관계운** (대인관계, 사회적 네트워킹, 갈등 해결)
-5. **연애운** (기존 관계 발전, 새로운 만남, 결혼 운)
-6. **가족운** (가족 간 화합, 가정사, 효도 운)
-7. **취업/승진운** (직업 운세, 승진 가능성, 이직 운)
-8. **여행운** (국내외 여행, 이사, 환경 변화)
-
-**출력 형식:**
-각 영역별로 다음과 같이 작성해주세요:
-- 운세 점수: ★★★★☆ (5점 만점)
-- 핵심 키워드: 3-5개의 키워드
-- 상세 분석: 2-3문단 (구체적인 조언 포함)
-- 주의사항: 피해야 할 것들
-- 추천 행동: 실천하면 좋은 것들
-
-전통적인 사주명리학 이론을 바탕으로 하되, 현대인의 라이프스타일을 고려한 실용적인 조언을 제공해주세요.
-답변은 한국어로 작성하고, 따뜻하면서도 전문적인 톤을 유지해주세요.
-"""
+한국어, 따뜻한 톤으로 작성."""
         return prompt
 
     def create_yearly_summary_prompt(self, birth_info: Dict[str, Any], monthly_fortunes: Dict[str, str]) -> str:
         """연간 종합 운세를 위한 프롬프트 생성"""
-        prompt = f"""
-당신은 한국의 전통 사주명리학과 현대적 운세 해석을 전문으로 하는 운세 전문가입니다.
+        # 월별 운세에서 키워드만 추출하여 토큰 절약
+        monthly_keywords = {}
+        for month, fortune in monthly_fortunes.items():
+            # 각 월별 운세에서 핵심 키워드만 추출 (첫 200자만 사용)
+            monthly_keywords[month] = fortune[:200] + "..." if len(fortune) > 200 else fortune
+        
+        prompt = f"""2026년 종합 운세 분석:
 
-다음 개인 정보와 월별 운세 분석을 바탕으로 2026년 전체 운세의 종합적인 판단을 제공해주세요:
+생년월일: {birth_info['birth_date']} {birth_info['birth_time']}
+성별: {birth_info['gender']}, 나이: {birth_info['age_in_2026']}세
 
-**개인 정보:**
-- 생년월일: {birth_info['birth_date']}
-- 태어난 시각: {birth_info['birth_time']}
-- 성별: {birth_info['gender']}
-- 2026년 나이: {birth_info['age_in_2026']}세
+월별 요약: {str(monthly_keywords)[:1000]}
 
-**월별 운세 요약:**
-{json.dumps(monthly_fortunes, ensure_ascii=False, indent=2)}
+분석 항목 (간결하게):
+1. 전체 총평 2. 최고의 시기 3. 주의 시기 4. 핵심 테마 3가지
+5. 8개 영역 연간 점수 (★★★☆☆ 형식)
+6. 핵심 조언 5가지 7. 행운 요소들 8. 격려 메시지
 
-**종합 분석 요청:**
-위의 월별 운세를 종합하여 다음 내용을 포함한 2026년 전체 운세를 제공해주세요:
-
-1. **2026년 전체 운세 개요** (총평 및 전반적인 흐름)
-2. **최고의 시기** (가장 좋은 운세를 보이는 시기와 이유)
-3. **주의가 필요한 시기** (조심해야 할 시기와 대비 방법)
-4. **핵심 테마** (2026년을 관통하는 주요 테마 3가지)
-5. **분야별 연간 종합 점수**:
-   - 건강운: ★★★★☆
-   - 금전운: ★★★★☆
-   - 학업/사업운: ★★★★☆
-   - 인간관계운: ★★★★☆
-   - 연애운: ★★★★☆
-   - 가족운: ★★★★☆
-   - 취업/승진운: ★★★★☆
-   - 여행운: ★★★★☆
-
-6. **2026년 핵심 조언** (실천하면 좋을 구체적인 행동 지침 5가지)
-7. **행운의 요소들** (행운의 색깔, 숫자, 방향, 음식 등)
-8. **마무리 격려 메시지**
-
-전통적인 사주명리학을 바탕으로 하되, 현대적이고 실용적인 관점에서 희망적이고 건설적인 조언을 제공해주세요.
-답변은 한국어로 작성하고, 따뜻하고 격려하는 톤을 유지해주세요.
-"""
+한국어, 따뜻한 톤으로 작성."""
         return prompt
 
     def get_gpt_response(self, prompt: str) -> str:
         """GPT API를 통해 운세 분석 결과 받기"""
         try:
             response = self.client.chat.completions.create(
-                model="gpt-4",  # GPT-4 사용 (GPT-5.2는 아직 공개되지 않음)
+                model="gpt-4o-mini",  # 더 긴 컨텍스트 지원하는 모델 사용
                 messages=[
-                    {"role": "system", "content": "당신은 한국의 전통 사주명리학과 현대 운세학을 전문으로 하는 숙련된 역술가입니다. 정확하고 상세한 분석을 통해 도움이 되는 조언을 제공합니다."},
+                    {"role": "system", "content": "한국 사주명리 전문가. 간결하고 정확한 운세 분석 제공."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.7,
-                max_tokens=3000
+                max_tokens=1500  # 토큰 수 줄임
             )
             return response.choices[0].message.content
         except Exception as e:
